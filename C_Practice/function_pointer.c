@@ -56,6 +56,6 @@ int main (int argc, char *argv[])
 	funcA(20, funcB);
 	funcA(30, funcC);
 
-	system("pause");
+	//system("pause");
 	return 0;
 }

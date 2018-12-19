@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 
-int *ReadNum (int x)
+long *ReadNum (int x)
 {
-	int numBuf[5] = { 0, 1, 2, 3, 4 };
+	long numBuf[5] = { 0, 1, 2, 3, 4 };
 
 	if (x < 0)
 	{
@@ -23,7 +23,7 @@ int main (int argc, char *argv[])
 	printf("This is pointer function example!\n");
 
 	for (i = 0; i < 5; i++) {
-		printf("int *ReadNum function return value is %d\n", *ReadNum(i) );
+		printf("int *ReadNum function return value is %ld\n", *ReadNum(i) );
 	}
 	
 	for (i = 0; i < 5; i++) {

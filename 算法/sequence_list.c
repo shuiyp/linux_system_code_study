@@ -3,15 +3,33 @@
 #include <stdlib.h>
 
 
+// 线性表定义：
+// 线性表（List）是零个或多个数据元素的集合；
+// 线性表中的数据元素之间是有顺序的；
+// 线性表中的数据元素个数是有限的；
+// 线性表中的数据元素的类型必须相同。
+
+// 优点：
+// 无需为线性表中的逻辑关系增加额外的空间
+// 可以快速的获取表中合法位置的元素
+// 缺点：
+// 插入和删除操作需要移动大量元素；
+// 当线性表长度变化较大时，难以确定存储空间的容量
+
+
+//typedef void sSeqList;
+//typedef void sSeqListNode;
+
 //在结构体中套 1 级指针
-typedef struct
+typedef struct SeqList
 {
 	int length;
 	int capacity;
 	unsigned int *pNode;
 }sSeqList;
 
-typedef void sSeqListNode;
+
+
 
 sSeqList* SeqList_Create (int capacity)
 {
@@ -26,7 +44,8 @@ sSeqList* SeqList_Create (int capacity)
 		return NULL;
 	}
 	memset(tmp, 0, sizeof(sSeqList) );
-	//根据 capacity 的大小分配节点的空间
+	
+	// 根据 capacity 的大小分配节点的空间
 	tmp->pNode = (unsigned int *)malloc(sizeof(unsigned int *) * capacity);
 	if (tmp->pNode == NULL)
 	{
@@ -37,7 +56,8 @@ sSeqList* SeqList_Create (int capacity)
 
 	tmp->capacity = capacity;
 	tmp->length = 0;
-
+	printf("SeqList_Create() sucess. sizeof(sSeqList) = %d, sizeof(tmp->pNode) * capacity = %d\n", 
+		    sizeof(sSeqList), sizeof(tmp->pNode) * capacity);
 	return tmp;
 }
 
@@ -96,7 +116,7 @@ int SeqList_Capacity (sSeqList* list)
 	return tmpList->capacity;
 }
 
-int SeqList_Insert (sSeqList* list, sSeqListNode* node, int pos)
+int SeqList_Insert (sSeqList* list, void* node, int pos)
 {
 	sSeqList *tmpList = NULL;
 	int i = 0, ret = 0;
@@ -134,11 +154,11 @@ int SeqList_Insert (sSeqList* list, sSeqListNode* node, int pos)
 	return 0;
 }
 
-sSeqListNode* SeqList_Get (sSeqList* list, int pos)
+void* SeqList_Get (sSeqList* list, int pos)
 {
 	sSeqList *tmpList = NULL;
 	int i = 0;
-	sSeqListNode *ret = 0;
+	void* ret = 0;
 
 	if (list == NULL || pos < 0)
 	{
@@ -151,11 +171,12 @@ sSeqListNode* SeqList_Get (sSeqList* list, int pos)
 	return ret;
 }
 
-sSeqListNode* SeqList_Delete (sSeqList* list, int pos)
+void* SeqList_Delete (sSeqList* list, int pos)
 {
 	sSeqList *tmpList = NULL;
-	sSeqListNode *ret = 0;
 	int i = 0;
+	void* ret = 0;
+	
 
 	if (list == NULL || pos < 0)
 	{
@@ -164,7 +185,7 @@ sSeqListNode* SeqList_Delete (sSeqList* list, int pos)
 	}
 	tmpList = (sSeqList *)list;
 
-	ret = (sSeqListNode *)tmpList->pNode[pos];// 缓存pos位置
+	ret = (void *)tmpList->pNode[pos];// 缓存pos位置
 	for (i = pos + 1; i < tmpList->length; i++)//pos后面的元素前移
 	{
 		tmpList->pNode[i - 1] = tmpList->pNode[i];
@@ -173,11 +194,71 @@ sSeqListNode* SeqList_Delete (sSeqList* list, int pos)
 	return ret;
 }
 
+void SeqList_Printf (sSeqList* list)
+{
+	int i = 0;
+
+	for (i = 0; i < list->length; i++)
+	{
+		printf("%d\n", list->pNode[i]);
+	}
+}
+
+typedef struct Teacher
+{
+	int age;
+	char name[64];
+}sTeacher;
+
 
 int main (int argc, char *argv[])
 {
+	int ret = 0, i = 0;
+	sSeqList* tmpList = NULL;
+	sTeacher t1, t2, t3, t4, t5;
 
+	t1.age = 31;
+	t2.age = 32;
+	t3.age = 33;
+	t4.age = 34;
+	t5.age = 35;
 
+	tmpList = SeqList_Create(10);
+	if (tmpList == NULL)
+	{
+		printf("func SeqList_Create() ret : %d\n", ret);
+	}
+
+	ret = SeqList_Insert (tmpList, &t1, 0);
+	printf("插入 1 个数据, 链表长度为 %d\n", SeqList_Length(tmpList) );
+	ret = SeqList_Insert (tmpList, &t2, 1);
+	printf("插入 1 个数据, 链表长度为 %d\n", SeqList_Length(tmpList) );
+	ret = SeqList_Insert (tmpList, &t3, 2);
+	printf("插入 1 个数据, 链表长度为 %d\n", SeqList_Length(tmpList) );
+	ret = SeqList_Insert (tmpList, &t4, 3);
+	printf("插入 1 个数据, 链表长度为 %d\n", SeqList_Length(tmpList) );
+	ret = SeqList_Insert (tmpList, &t5, 4);
+	printf("插入 1 个数据, 链表长度为 %d\n", SeqList_Length(tmpList) );
+
+	SeqList_Printf(tmpList);
+
+	for (i = 0; i < SeqList_Length(tmpList); i++)
+	{
+		sTeacher* tmp = (sTeacher *)SeqList_Get(tmpList, i);
+		if (tmp == NULL)
+		{
+			return ;
+		}
+		printf("tmp->age:%d\n", tmp->age);
+	}
+
+	while (SeqList_Length(tmpList) > 0)
+	{
+		SeqList_Delete(tmpList, 0);
+		printf("删除头上的数据 1 个数据, 链表长度为 %d\n", SeqList_Length(tmpList) );
+	}
+
+	system("pause");
 }
 
 

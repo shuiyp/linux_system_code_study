@@ -5,37 +5,71 @@
 // 循环列表链式存储设计与实现
 
 
-// 优点：
-// 无需一次性定制链表的容量
-// 插入和删除操作无需移动数据元素
-// 缺点：
-// 数据元素必须保存后继元素的位置信息
-// 获取指定数据的元素操作需要顺序访问之前的元素
-// 
 
 
-typedef void CircleList;
 
-typedef struct CircleListNode
+// typedef void CircleList;
+
+// typedef struct CircleListNode
+// {
+// 	struct CircleListNode* next;
+// }sCircleListNode;
+
+// struct Value
+// {
+// 	sCircleListNode circleNode;
+// 	int v;
+// };
+
+
+sCircleLinkList* CircleLinkList_Init(void)
 {
-	struct CircleListNode* next;
-}sCircleListNode;
+	sCircleLinkList *tmpList = NULL;
+	sCircleListNode *headNode = NULL;
 
-struct Value
-{
-	sCircleListNode circleNode;
-	int v;
-};
+	tmpList = (sCircleLinkList *)malloc(sizeof(sCircleLinkList) );
+	if (tmpList == NULL)
+	{
+		return NULL;
+	}
+	memset(tmpList, 0, sizeof(sCircleLinkList) );
 
+	// 创建头结点，是为了空链表和非空链表处理一致
+	headNode = (sCircleLinkNode *)malloc(sizeof(sCircleLinkNode) );
+	if (headNode == NULL)
+	{
+		if (tmpList != NULL)
+		{
+			free(tmpList);
+		}
+		return NULL;
+	}
+	headNode->data = NULL;
+	headNode->next = NULL;
+	// 初始化链表
+	tmpList->head = headNode;
+	tmpList->rear = headNode;
+	tmpList->length = 0;
 
-CircleList* CircleList_Create()
-{
-	return NULL;
+	return tmpList;
 }
 
-void CircleList_Destroy(CircleList* list)
+// 销毁链表
+void CircleLinkList_Destroy(sCircleLinkList* dlist)
 {
-
+	sCircleListNode* pCurrent = dlist->head;
+	while (pCurrent != dlist->head)
+	{
+		// 缓存被删除结点的下一个结点
+		sCircleListNode* pNext = pCurrent->next;
+		free(pCurrent);
+		pCurrent = pNext;
+	}
+	if (dlist != NULL)
+	{
+		free(dlist);
+		dlist = NULL;
+	}
 }
 
 void CircleList_Clear(CircleList* list)
@@ -117,21 +151,7 @@ typedef struct
 	int length;
 }sLinkList;
 
-LinkList* LinkList_Create()
-{
-	sLinkList *tmpList = NULL;
 
-	tmpList = (sLinkList *)malloc(sizeof(sLinkList) );
-	if (tmpList == NULL)
-	{
-		return NULL;
-	}
-	memset(tmpList, 0, sizeof(sLinkList) );
-	tmpList->header.next = NULL;
-	tmpList->length = 0;
-
-	return tmpList;
-}
 
 void LinkList_Destroy(LinkList* list)
 {
